@@ -42,13 +42,13 @@ async function setupSession(initiator, opponent) {
 }
 
 describe("OlmDevice", function() {
-    if (!global.Olm) {
+    if (!olmlib.OlmRegistry.getInstance) {
         logger.warn('Not running megolm unit tests: libolm not present');
         return;
     }
 
     beforeAll(function() {
-        return global.Olm.init();
+        return olmlib.OlmRegistry.getInstance.init();
     });
 
     let aliceOlmDevice;

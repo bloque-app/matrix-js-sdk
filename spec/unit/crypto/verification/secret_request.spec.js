@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { CrossSigningInfo } from '../../../../src/crypto/CrossSigning';
-import { encodeBase64 } from "../../../../src/crypto/olmlib";
+import { encodeBase64, OlmRegistry } from "../../../../src/crypto/olmlib";
 import { setupWebcrypto, teardownWebcrypto } from './util';
 import { VerificationBase } from '../../../../src/crypto/verification/Base';
 
@@ -33,7 +33,7 @@ const testKeyPub = "nqOvzeuGWT/sRx3h7+MHoInYj3Uk2LD/unI9kDYcHwk";
 describe("self-verifications", () => {
     beforeAll(function() {
         setupWebcrypto();
-        return global.Olm.init();
+        return OlmRegistry.getInstance.init();
     });
 
     afterAll(() => {

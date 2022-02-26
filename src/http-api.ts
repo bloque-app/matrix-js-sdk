@@ -27,7 +27,7 @@ import type { Request as _Request, CoreOptions } from "request";
 // we use our own implementation of setTimeout, so that if we get suspended in
 // the middle of a /sync, we cancel the sync as soon as we awake, rather than
 // waiting for the delay to elapse.
-import * as callbacks from "./realtime-callbacks";
+import { Callbacks } from "./realtime-callbacks";
 import { IUploadOpts } from "./@types/requests";
 import { IAbortablePromise, IUsageLimit } from "./@types/partials";
 import { IDeferred } from "./utils";
@@ -314,9 +314,12 @@ export class MatrixHttpApi {
 
         // backwards-compatibility hacks where we used to do different things
         // between browser and node.
+        const XMLHttpRequestWrapper = typeof XMLHttpRequest == 'undefined' ?
+            utils.safeGlobal("XMLHttpRequest") : XMLHttpRequest;
         let rawResponse = opts.rawResponse;
+
         if (rawResponse === undefined) {
-            if (global.XMLHttpRequest) {
+            if (XMLHttpRequestWrapper) {
                 rawResponse = false;
             } else {
                 logger.warn(
@@ -331,7 +334,7 @@ export class MatrixHttpApi {
 
         let onlyContentUri = opts.onlyContentUri;
         if (!rawResponse && onlyContentUri === undefined) {
-            if (global.XMLHttpRequest) {
+            if (XMLHttpRequestWrapper) {
                 logger.warn(
                     "Returning only the content-uri from uploadContent(). " +
                     "Future versions of the js-sdk will change this " +
@@ -373,9 +376,11 @@ export class MatrixHttpApi {
             };
         }
 
-        if (global.XMLHttpRequest) {
+        // const XMLHttpRequestWrapper = typeof XMLHttpRequest === "undefined";
+
+        if (XMLHttpRequestWrapper) {
             const defer = utils.defer<UploadContentResponseType<O>>();
-            const xhr = new global.XMLHttpRequest();
+            const xhr = new XMLHttpRequest();
             const cb = requestCallback(defer, opts.callback, this.opts.onlyData);
 
             const timeoutFn = function() {
@@ -384,13 +389,13 @@ export class MatrixHttpApi {
             };
 
             // set an initial timeout of 30s; we'll advance it each time we get a progress notification
-            let timeoutTimer = callbacks.setTimeout(timeoutFn, 30000);
+            let timeoutTimer = Callbacks.setTimeout(timeoutFn, 30000);
 
             xhr.onreadystatechange = function() {
                 let resp: string;
                 switch (xhr.readyState) {
-                    case global.XMLHttpRequest.DONE:
-                        callbacks.clearTimeout(timeoutTimer);
+                    case XMLHttpRequest.DONE:
+                        Callbacks.clearTimeout(timeoutTimer);
                         try {
                             if (xhr.status === 0) {
                                 throw new AbortError();
@@ -412,10 +417,10 @@ export class MatrixHttpApi {
                 }
             };
             xhr.upload.addEventListener("progress", function(ev) {
-                callbacks.clearTimeout(timeoutTimer);
+                Callbacks.clearTimeout(timeoutTimer);
                 upload.loaded = ev.loaded;
                 upload.total = ev.total;
-                timeoutTimer = callbacks.setTimeout(timeoutFn, 30000);
+                timeoutTimer = Callbacks.setTimeout(timeoutFn, 30000);
                 if (opts.progressHandler) {
                     opts.progressHandler({
                         loaded: ev.loaded,
@@ -823,9 +828,9 @@ export class MatrixHttpApi {
         const resetTimeout = () => {
             if (localTimeoutMs) {
                 if (timeoutId) {
-                    callbacks.clearTimeout(timeoutId);
+                    Callbacks.clearTimeout(timeoutId);
                 }
-                timeoutId = callbacks.setTimeout(function() {
+                timeoutId = Callbacks.setTimeout(function() {
                     timedOut = true;
                     req?.abort?.();
                     defer.reject(new MatrixError({
@@ -857,7 +862,7 @@ export class MatrixHttpApi {
                 },
                 (err, response, body) => {
                     if (localTimeoutMs) {
-                        callbacks.clearTimeout(timeoutId);
+                        Callbacks.clearTimeout(timeoutId);
                         if (timedOut) {
                             return; // already rejected promise
                         }

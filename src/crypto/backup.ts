@@ -22,7 +22,7 @@ limitations under the License.
 
 import { MatrixClient } from "../client";
 import { logger } from "../logger";
-import { MEGOLM_ALGORITHM, verifySignature } from "./olmlib";
+import { MEGOLM_ALGORITHM, OlmRegistry, verifySignature } from "./olmlib";
 import { DeviceInfo } from "./deviceinfo";
 import { DeviceTrustLevel } from './CrossSigning';
 import { keyFromPassphrase } from './key_passphrase';
@@ -608,7 +608,7 @@ export class Curve25519 implements BackupAlgorithm {
         if (!authData || !("public_key" in authData)) {
             throw new Error("auth_data missing required information");
         }
-        const publicKey = new global.Olm.PkEncryption();
+        const publicKey = new OlmRegistry.getInstance.PkEncryption();
         publicKey.set_recipient_key(authData.public_key);
         return new Curve25519(authData as ICurve25519AuthData, publicKey, getKey);
     }
@@ -616,7 +616,7 @@ export class Curve25519 implements BackupAlgorithm {
     public static async prepare(
         key: string | Uint8Array | null,
     ): Promise<[Uint8Array, AuthData]> {
-        const decryption = new global.Olm.PkDecryption();
+        const decryption = new OlmRegistry.getInstance.PkDecryption();
         try {
             const authData: Partial<ICurve25519AuthData> = {};
             if (!key) {
@@ -629,7 +629,7 @@ export class Curve25519 implements BackupAlgorithm {
                 authData.private_key_iterations = derivation.iterations;
                 authData.public_key = decryption.init_with_private_key(derivation.key);
             }
-            const publicKey = new global.Olm.PkEncryption();
+            const publicKey = new OlmRegistry.getInstance.PkEncryption();
             publicKey.set_recipient_key(authData.public_key);
 
             return [
@@ -659,7 +659,7 @@ export class Curve25519 implements BackupAlgorithm {
 
     public async decryptSessions(sessions: Record<string, IKeyBackupSession>): Promise<IMegolmSessionData[]> {
         const privKey = await this.getKey();
-        const decryption = new global.Olm.PkDecryption();
+        const decryption = new OlmRegistry.getInstance.PkDecryption();
         try {
             const backupPubKey = decryption.init_with_private_key(privKey);
 
@@ -690,7 +690,7 @@ export class Curve25519 implements BackupAlgorithm {
     }
 
     public async keyMatches(key: Uint8Array): Promise<boolean> {
-        const decryption = new global.Olm.PkDecryption();
+        const decryption = new OlmRegistry.getInstance.PkDecryption();
         let pubKey;
         try {
             pubKey = decryption.init_with_private_key(key);

@@ -708,3 +708,13 @@ export function recursivelyAssign(target: Object, source: Object, ignoreNullish 
     }
     return target;
 }
+
+type GlobalValue<T extends keyof typeof global> = (typeof global)[T];
+export function safeGlobal<TField extends keyof typeof global>(lookFor: TField): GlobalValue<TField> {
+    if (typeof global == "undefined") {
+        throw new Error(`${lookFor} was not found either the global and scope`);
+    }
+
+    return global[lookFor];
+}
+

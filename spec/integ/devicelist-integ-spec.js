@@ -19,6 +19,7 @@ limitations under the License.
 import { TestClient } from '../TestClient';
 import * as testUtils from '../test-utils';
 import { logger } from '../../src/logger';
+import { OlmRegistry } from '../../src/crypto/olmlib';
 
 const ROOM_ID = "!room:id";
 
@@ -68,7 +69,7 @@ function getSyncResponse(roomMembers) {
 }
 
 describe("DeviceList management:", function() {
-    if (!global.Olm) {
+    if (!OlmRegistry.getInstance) {
         logger.warn('not running deviceList tests: Olm not present');
         return;
     }

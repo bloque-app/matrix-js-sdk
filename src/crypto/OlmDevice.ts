@@ -23,6 +23,7 @@ import * as algorithms from './algorithms';
 import { CryptoStore, IProblem, ISessionInfo, IWithheld } from "./store/base";
 import { IOlmDevice, IOutboundGroupSessionKey } from "./algorithms/megolm";
 import { IMegolmSessionData } from "./index";
+import { OlmRegistry } from "./olmlib";
 
 // The maximum size of an event is 65K, and we base64 the content, so this is a
 // reasonable approximation to the biggest plaintext we can encrypt.
@@ -178,7 +179,7 @@ export class OlmDevice {
      * @return {array} The version of Olm.
      */
     static getOlmVersion(): [number, number, number] {
-        return global.Olm.get_library_version();
+        return OlmRegistry.getInstance.get_library_version();
     }
 
     /**
@@ -202,7 +203,7 @@ export class OlmDevice {
      */
     public async init({ pickleKey, fromExportedDevice }: IInitOpts = {}): Promise<void> {
         let e2eKeys;
-        const account = new global.Olm.Account();
+        const account = new OlmRegistry.getInstance.Account();
 
         try {
             if (fromExportedDevice) {
@@ -302,7 +303,7 @@ export class OlmDevice {
      */
     private getAccount(txn: unknown, func: (account: Account) => void): void {
         this.cryptoStore.getAccount(txn, (pickledAccount: string) => {
-            const account = new global.Olm.Account();
+            const account = new OlmRegistry.getInstance.Account();
             try {
                 account.unpickle(this.pickleKey, pickledAccount);
                 func(account);
@@ -396,7 +397,7 @@ export class OlmDevice {
         sessionInfo: ISessionInfo,
         func: (unpickledSessionInfo: IUnpickledSessionInfo) => void,
     ): void {
-        const session = new global.Olm.Session();
+        const session = new OlmRegistry.getInstance.Session();
         try {
             session.unpickle(this.pickleKey, sessionInfo.session);
             const unpickledSessInfo: IUnpickledSessionInfo = Object.assign({}, sessionInfo, { session });
@@ -431,7 +432,7 @@ export class OlmDevice {
      * @private
      */
     private getUtility<T>(func: (utility: Utility) => T): T {
-        const utility = new global.Olm.Utility();
+        const utility = new OlmRegistry.getInstance.Utility();
         try {
             return func(utility);
         } finally {
@@ -580,7 +581,7 @@ export class OlmDevice {
             ],
             (txn) => {
                 this.getAccount(txn, (account: Account) => {
-                    const session = new global.Olm.Session();
+                    const session = new OlmRegistry.getInstance.Session();
                     try {
                         session.create_outbound(account, theirIdentityKey, theirOneTimeKey);
                         newSessionId = session.session_id();
@@ -633,7 +634,7 @@ export class OlmDevice {
             ],
             (txn) => {
                 this.getAccount(txn, (account: Account) => {
-                    const session = new global.Olm.Session();
+                    const session = new OlmRegistry.getInstance.Session();
                     try {
                         session.create_inbound_from(account, theirDeviceIdentityKey, ciphertext);
                         account.remove_one_time_keys(session);
@@ -945,7 +946,7 @@ export class OlmDevice {
             throw new Error("Unknown outbound group session " + sessionId);
         }
 
-        const session = new global.Olm.OutboundGroupSession();
+        const session = new OlmRegistry.getInstance.OutboundGroupSession();
         try {
             session.unpickle(this.pickleKey, pickled);
             return func(session);
@@ -960,7 +961,7 @@ export class OlmDevice {
      * @return {string} sessionId for the outbound session.
      */
     public createOutboundGroupSession(): string {
-        const session = new global.Olm.OutboundGroupSession();
+        const session = new OlmRegistry.getInstance.OutboundGroupSession();
         try {
             session.create();
             this.saveOutboundGroupSession(session);
@@ -1022,7 +1023,7 @@ export class OlmDevice {
         sessionData: InboundGroupSessionData,
         func: (session: InboundGroupSession) => T,
     ): T {
-        const session = new global.Olm.InboundGroupSession();
+        const session = new OlmRegistry.getInstance.InboundGroupSession();
         try {
             session.unpickle(this.pickleKey, sessionData.session);
             return func(session);
@@ -1109,7 +1110,7 @@ export class OlmDevice {
                     roomId, senderKey, sessionId, txn,
                     (existingSession: InboundGroupSession, existingSessionData: InboundGroupSessionData) => {
                         // new session.
-                        const session = new global.Olm.InboundGroupSession();
+                        const session = new OlmRegistry.getInstance.InboundGroupSession();
                         try {
                             if (exportFormat) {
                                 session.import_session(sessionKey);

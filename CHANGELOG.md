@@ -4415,7 +4415,6 @@ New methods:
  * `$DATA_STORE.getSyncToken()`
 
 Crypto infrastructure (crypto is *NOT* available in this version):
- * `global.CRYPTO_ENABLED`
  * `MatrixClient.isCryptoEnabled()`
  * `MatrixClient.uploadKeys(maxKeys)`
  * `MatrixClient.downloadKeys(userIds, forceDownload)`

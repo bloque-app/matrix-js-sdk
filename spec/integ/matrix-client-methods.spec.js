@@ -1,8 +1,8 @@
 import * as utils from "../test-utils";
-import { CRYPTO_ENABLED } from "../../src/client";
 import { MatrixEvent } from "../../src/models/event";
 import { Filter, MemoryStore, Room } from "../../src/matrix";
 import { TestClient } from "../TestClient";
+import { isCryptoAvailable } from "../../src/crypto";
 
 describe("MatrixClient", function() {
     let client = null;
@@ -287,7 +287,7 @@ describe("MatrixClient", function() {
     });
 
     describe("downloadKeys", function() {
-        if (!CRYPTO_ENABLED) {
+        if (!isCryptoAvailable()) {
             return;
         }
 

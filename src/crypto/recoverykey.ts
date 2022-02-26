@@ -16,6 +16,8 @@ limitations under the License.
 
 import bs58 from 'bs58';
 
+import { OlmRegistry } from './olmlib';
+
 // picked arbitrarily but to try & avoid clashing with any bitcoin ones
 // (which are also base58 encoded, but bitcoin's involve a lot more hashing)
 const OLM_RECOVERY_KEY_PREFIX = [0x8B, 0x01];
@@ -54,13 +56,13 @@ export function decodeRecoveryKey(recoveryKey: string): Uint8Array {
 
     if (
         result.length !==
-        OLM_RECOVERY_KEY_PREFIX.length + global.Olm.PRIVATE_KEY_LENGTH + 1
+        OLM_RECOVERY_KEY_PREFIX.length + OlmRegistry.getInstance.PRIVATE_KEY_LENGTH + 1
     ) {
         throw new Error("Incorrect length");
     }
 
     return Uint8Array.from(result.slice(
         OLM_RECOVERY_KEY_PREFIX.length,
-        OLM_RECOVERY_KEY_PREFIX.length + global.Olm.PRIVATE_KEY_LENGTH,
+        OLM_RECOVERY_KEY_PREFIX.length + OlmRegistry.getInstance.PRIVATE_KEY_LENGTH,
     ));
 }

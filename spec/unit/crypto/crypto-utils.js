@@ -1,3 +1,4 @@
+import { OlmRegistry } from '../../../src/crypto/olmlib';
 import { IndexedDBCryptoStore } from '../../../src/crypto/store/indexeddb-crypto-store';
 
 // needs to be phased out and replaced with bootstrapSecretStorage,
@@ -31,7 +32,7 @@ export async function resetCrossSigningKeys(client, {
 }
 
 export async function createSecretStorageKey() {
-    const decryption = new global.Olm.PkDecryption();
+    const decryption = new OlmRegistry.getInstance.PkDecryption();
     const storagePublicKey = decryption.generate_key();
     const storagePrivateKey = decryption.get_private_key();
     decryption.free();

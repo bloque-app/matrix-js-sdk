@@ -51,13 +51,13 @@ async function makeTestClient(userInfo, options, keys) {
 }
 
 describe("Cross Signing", function() {
-    if (!global.Olm) {
+    if (!olmlib.OlmRegistry.getInstance) {
         logger.warn('Not running megolm backup unit tests: libolm not present');
         return;
     }
 
     beforeAll(function() {
-        return global.Olm.init();
+        return olmlib.OlmRegistry.getInstance.init();
     });
 
     it("should sign the master key with the device key", async function() {
@@ -343,10 +343,10 @@ describe("Cross Signing", function() {
         // set Alice's cross-signing key
         await resetCrossSigningKeys(alice);
         // Alice downloads Bob's ssk and device key
-        const bobMasterSigning = new global.Olm.PkSigning();
+        const bobMasterSigning = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobMasterPrivkey = bobMasterSigning.generate_seed();
         const bobMasterPubkey = bobMasterSigning.init_with_seed(bobMasterPrivkey);
-        const bobSigning = new global.Olm.PkSigning();
+        const bobSigning = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobPrivkey = bobSigning.generate_seed();
         const bobPubkey = bobSigning.init_with_seed(bobPrivkey);
         const bobSSK = {
@@ -458,7 +458,7 @@ describe("Cross Signing", function() {
         aliceDevice.algorithms = deviceInfo.algorithms;
         await alice.crypto.signObject(aliceDevice);
 
-        const bobOlmAccount = new global.Olm.Account();
+        const bobOlmAccount = new olmlib.OlmRegistry.getInstance.Account();
         bobOlmAccount.create();
         const bobKeys = JSON.parse(bobOlmAccount.identity_keys());
         const bobDevice = {
@@ -592,10 +592,10 @@ describe("Cross Signing", function() {
         await resetCrossSigningKeys(alice);
         // Alice downloads Bob's ssk and device key
         // (NOTE: device key is not signed by ssk)
-        const bobMasterSigning = new global.Olm.PkSigning();
+        const bobMasterSigning = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobMasterPrivkey = bobMasterSigning.generate_seed();
         const bobMasterPubkey = bobMasterSigning.init_with_seed(bobMasterPrivkey);
-        const bobSigning = new global.Olm.PkSigning();
+        const bobSigning = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobPrivkey = bobSigning.generate_seed();
         const bobPubkey = bobSigning.init_with_seed(bobPrivkey);
         const bobSSK = {
@@ -659,10 +659,10 @@ describe("Cross Signing", function() {
         alice.uploadKeySignatures = async () => {};
         await resetCrossSigningKeys(alice);
         // Alice downloads Bob's keys
-        const bobMasterSigning = new global.Olm.PkSigning();
+        const bobMasterSigning = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobMasterPrivkey = bobMasterSigning.generate_seed();
         const bobMasterPubkey = bobMasterSigning.init_with_seed(bobMasterPrivkey);
-        const bobSigning = new global.Olm.PkSigning();
+        const bobSigning = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobPrivkey = bobSigning.generate_seed();
         const bobPubkey = bobSigning.init_with_seed(bobPrivkey);
         const bobSSK = {
@@ -719,10 +719,10 @@ describe("Cross Signing", function() {
         expect(bobDeviceTrust.isTofu()).toBeTruthy();
 
         // Alice downloads new SSK for Bob
-        const bobMasterSigning2 = new global.Olm.PkSigning();
+        const bobMasterSigning2 = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobMasterPrivkey2 = bobMasterSigning2.generate_seed();
         const bobMasterPubkey2 = bobMasterSigning2.init_with_seed(bobMasterPrivkey2);
-        const bobSigning2 = new global.Olm.PkSigning();
+        const bobSigning2 = new olmlib.OlmRegistry.getInstance.PkSigning();
         const bobPrivkey2 = bobSigning2.generate_seed();
         const bobPubkey2 = bobSigning2.init_with_seed(bobPrivkey2);
         const bobSSK2 = {

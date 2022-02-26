@@ -31,7 +31,7 @@ import '../olm-loader';
 import { logger } from '../../src/logger';
 import * as testUtils from "../test-utils";
 import { TestClient } from "../TestClient";
-import { CRYPTO_ENABLED } from "../../src/client";
+import { isCryptoAvailable } from '../../src/crypto';
 
 let aliTestClient;
 const roomId = "!room:localhost";
@@ -394,7 +394,7 @@ function firstSync(testClient) {
 }
 
 describe("MatrixClient crypto", function() {
-    if (!CRYPTO_ENABLED) {
+    if (!isCryptoAvailable()) {
         return;
     }
 

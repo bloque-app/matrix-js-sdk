@@ -27,6 +27,7 @@ import 'fake-indexeddb/auto';
 import 'jest-localstorage-mock';
 import { OlmDevice } from "../../../src/crypto/OlmDevice";
 import { logger } from '../../../src/logger';
+import { OlmRegistry } from '../../../src/crypto/olmlib';
 
 const userId = "@alice:example.com";
 
@@ -51,13 +52,13 @@ badKey[0] ^= 1;
 const masterKeyPub = "nqOvzeuGWT/sRx3h7+MHoInYj3Uk2LD/unI9kDYcHwk";
 
 describe("CrossSigningInfo.getCrossSigningKey", function() {
-    if (!global.Olm) {
+    if (!OlmRegistry.getInstance) {
         logger.warn('Not running megolm backup unit tests: libolm not present');
         return;
     }
 
     beforeAll(function() {
-        return global.Olm.init();
+        return OlmRegistry.getInstance.init();
     });
 
     it("should throw if no callback is provided", async () => {
@@ -88,7 +89,7 @@ describe("CrossSigningInfo.getCrossSigningKey", function() {
         expect(pubKey).toEqual(masterKeyPub);
         // check that the pkSigning object corresponds to the pubKey
         const signature = pkSigning.sign("message");
-        const util = new global.Olm.Utility();
+        const util = new OlmRegistry.getInstance.Utility();
         try {
             util.ed25519_verify(pubKey, "message", signature);
         } finally {

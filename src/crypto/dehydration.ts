@@ -16,7 +16,7 @@ limitations under the License.
 
 import anotherjson from "another-json";
 
-import { decodeBase64, encodeBase64 } from './olmlib';
+import { decodeBase64, encodeBase64, OlmRegistry } from './olmlib';
 import { IndexedDBCryptoStore } from '../crypto/store/indexeddb-crypto-store';
 import { decryptAES, encryptAES } from './aes';
 import { logger } from '../logger';
@@ -182,7 +182,7 @@ export class DehydrationManager {
 
             logger.log("Creating account");
             // create the account and all the necessary keys
-            const account = new global.Olm.Account();
+            const account = new OlmRegistry.getInstance.Account();
             account.create();
             const e2eKeys = JSON.parse(account.identity_keys());
 

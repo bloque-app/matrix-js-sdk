@@ -16,6 +16,7 @@ limitations under the License.
 
 import { randomString } from '../randomstring';
 import { getCrypto } from '../utils';
+import { OlmRegistry } from './olmlib';
 
 const subtleCrypto = (typeof window !== "undefined" && window.crypto) ?
     (window.crypto.subtle || window.crypto.webkitSubtle) : null;
@@ -39,7 +40,7 @@ interface IKey {
 }
 
 export async function keyFromAuthData(authData: IAuthData, password: string): Promise<Uint8Array> {
-    if (!global.Olm) {
+    if (!OlmRegistry.getInstance) {
         throw new Error("Olm is not available");
     }
 
@@ -58,7 +59,7 @@ export async function keyFromAuthData(authData: IAuthData, password: string): Pr
 }
 
 export async function keyFromPassphrase(password: string): Promise<IKey> {
-    if (!global.Olm) {
+    if (!OlmRegistry.getInstance) {
         throw new Error("Olm is not available");
     }
 

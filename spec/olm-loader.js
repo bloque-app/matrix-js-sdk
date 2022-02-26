@@ -15,13 +15,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { OlmRegistry } from '../src/crypto/olmlib';
 import { logger } from '../src/logger';
 import * as utils from "../src/utils";
 
 // try to load the olm library.
 try {
-    global.Olm = require('@matrix-org/olm');
-    logger.log('loaded libolm');
+    const Olm = require('@matrix-org/olm');
+    OlmRegistry.createInstance(Olm);
 } catch (e) {
     logger.warn("unable to run crypto tests: libolm not available");
 }

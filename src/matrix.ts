@@ -156,10 +156,14 @@ export function createClient(opts: ICreateClientOpts | string) {
             "baseUrl": opts as string,
         };
     }
+
     opts.request = opts.request || requestInstance;
     opts.store = opts.store || new MemoryStore({
-        localStorage: global.localStorage,
+        localStorage: typeof localStorage === "undefined" ? // if
+            typeof global !== "undefined" ? global.localStorage : undefined
+            : localStorage, // else
     });
+
     opts.scheduler = opts.scheduler || new MatrixScheduler();
     opts.cryptoStore = opts.cryptoStore || cryptoStoreFactory();
     return new MatrixClient(opts);

@@ -20,6 +20,7 @@ import anotherjson from "another-json";
 import * as testUtils from "../test-utils";
 import { TestClient } from "../TestClient";
 import { logger } from "../../src/logger";
+import { OlmRegistry } from "../../src/crypto/olmlib";
 
 const ROOM_ID = "!room:id";
 
@@ -35,7 +36,7 @@ function createOlmSession(olmAccount, recipientTestClient) {
         const otkId = Object.keys(keys)[0];
         const otk = keys[otkId];
 
-        const session = new global.Olm.Session();
+        const session = new OlmRegistry.getInstance.Session();
         session.create_outbound(
             olmAccount, recipientTestClient.getDeviceKey(), otk.key,
         );
@@ -198,11 +199,11 @@ function getSyncResponse(roomMembers) {
 }
 
 describe("megolm", function() {
-    if (!global.Olm) {
+    if (!OlmRegistry.getInstance) {
         logger.warn('not running megolm tests: Olm not present');
         return;
     }
-    const Olm = global.Olm;
+    const Olm = OlmRegistry.getInstance;
 
     let testOlmAccount;
     let testSenderKey;

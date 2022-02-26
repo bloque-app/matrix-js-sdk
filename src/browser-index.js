@@ -34,7 +34,7 @@ matrixcs.request(function(opts, fn) {
 // indexeddb disabled.
 let indexedDB;
 try {
-    indexedDB = global.indexedDB;
+    indexedDB = window.indexedDB;
 } catch (e) {}
 
 // if our browser (appears to) support indexeddb, use an indexeddb crypto store.
@@ -52,4 +52,4 @@ if (indexedDB) {
 // It's awkward, but required.
 export * from "./matrix";
 export default matrixcs; // keep export for browserify package deps
-global.matrixcs = matrixcs;
+window.matrixcs = matrixcs;

@@ -32,6 +32,7 @@ import {
 } from './Error';
 import { logger } from '../../logger';
 import { IContent, MatrixEvent } from "../../models/event";
+import { OlmRegistry } from '../olmlib';
 
 const START_TYPE = "m.key.verification.start";
 
@@ -260,8 +261,8 @@ export class SAS extends Base<SasEvent, EventHandlerMap> {
     }
 
     protected doVerification = async (): Promise<void> => {
-        await global.Olm.init();
-        olmutil = olmutil || new global.Olm.Utility();
+        await OlmRegistry.getInstance.init();
+        olmutil = olmutil || new OlmRegistry.getInstance.Utility();
 
         // make sure user's keys are downloaded
         await this.baseApis.downloadKeys([this.userId]);
@@ -346,7 +347,7 @@ export class SAS extends Base<SasEvent, EventHandlerMap> {
         const keyAgreement = content.key_agreement_protocol;
         const macMethod = content.message_authentication_code;
         const hashCommitment = content.commitment;
-        const olmSAS = new global.Olm.SAS();
+        const olmSAS = new OlmRegistry.getInstance.SAS();
         try {
             this.ourSASPubKey = olmSAS.get_pubkey();
             await this.send("m.key.verification.key", {
@@ -418,7 +419,7 @@ export class SAS extends Base<SasEvent, EventHandlerMap> {
             throw newUnknownMethodError();
         }
 
-        const olmSAS = new global.Olm.SAS();
+        const olmSAS = new OlmRegistry.getInstance.SAS();
         try {
             const commitmentStr = olmSAS.get_pubkey() + anotherjson.stringify(content);
             await this.send("m.key.verification.accept", {

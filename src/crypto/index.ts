@@ -109,7 +109,7 @@ export const verificationMethods = {
 export type VerificationMethod = keyof typeof verificationMethods | string;
 
 export function isCryptoAvailable(): boolean {
-    return Boolean(global.Olm);
+    return Boolean(olmlib.OlmRegistry.getInstance);
 }
 
 const MIN_FORCE_SESSION_INTERVAL_MS = 60 * 60 * 1000;
@@ -452,7 +452,7 @@ export class Crypto extends TypedEventEmitter<CryptoEvent, CryptoEventHandlerMap
      */
     public async init({ exportedOlmDevice, pickleKey }: IInitOpts = {}): Promise<void> {
         logger.log("Crypto: initialising Olm...");
-        await global.Olm.init();
+        await olmlib.OlmRegistry.getInstance.init();
         logger.log(exportedOlmDevice
             ? "Crypto: initialising Olm device from exported device..."
             : "Crypto: initialising Olm device...",
@@ -559,7 +559,7 @@ export class Crypto extends TypedEventEmitter<CryptoEvent, CryptoEventHandlerMap
      *     and raw private key to avoid round tripping if needed.
      */
     public async createRecoveryKeyFromPassphrase(password?: string): Promise<IRecoveryKey> {
-        const decryption = new global.Olm.PkDecryption();
+        const decryption = new olmlib.OlmRegistry.getInstance.PkDecryption();
         try {
             const keyInfo: Partial<IRecoveryKey["keyInfo"]> = {};
             if (password) {
@@ -1114,7 +1114,7 @@ export class Crypto extends TypedEventEmitter<CryptoEvent, CryptoEventHandlerMap
     public checkSecretStoragePrivateKey(privateKey: Uint8Array, expectedPublicKey: string): boolean {
         let decryption = null;
         try {
-            decryption = new global.Olm.PkDecryption();
+            decryption = new olmlib.OlmRegistry.getInstance.PkDecryption();
             const gotPubkey = decryption.init_with_private_key(privateKey);
             // make sure it agrees with the given pubkey
             return gotPubkey === expectedPublicKey;
@@ -1187,7 +1187,7 @@ export class Crypto extends TypedEventEmitter<CryptoEvent, CryptoEventHandlerMap
     public checkCrossSigningPrivateKey(privateKey: Uint8Array, expectedPublicKey: string): boolean {
         let signing = null;
         try {
-            signing = new global.Olm.PkSigning();
+            signing = new olmlib.OlmRegistry.getInstance.PkSigning();
             const gotPubkey = signing.init_with_seed(privateKey);
             // make sure it agrees with the given pubkey
             return gotPubkey === expectedPublicKey;

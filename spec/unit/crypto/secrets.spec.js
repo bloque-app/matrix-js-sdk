@@ -59,20 +59,20 @@ function sign(obj, key, userId) {
 }
 
 describe("Secrets", function() {
-    if (!global.Olm) {
+    if (!olmlib.OlmRegistry.getInstance) {
         logger.warn('Not running megolm backup unit tests: libolm not present');
         return;
     }
 
     beforeAll(function() {
-        return global.Olm.init();
+        return olmlib.OlmRegistry.getInstance.init();
     });
 
     it("should store and retrieve a secret", async function() {
         const key = new Uint8Array(16);
         for (let i = 0; i < 16; i++) key[i] = i;
 
-        const signing = new global.Olm.PkSigning();
+        const signing = new olmlib.OlmRegistry.getInstance.PkSigning();
         const signingKey = signing.generate_seed();
         const signingPubKey = signing.init_with_seed(signingKey);
 
@@ -343,7 +343,7 @@ describe("Secrets", function() {
         });
 
         it("bootstraps when cross-signing keys in secret storage", async function() {
-            const decryption = new global.Olm.PkDecryption();
+            const decryption = new olmlib.OlmRegistry.getInstance.PkDecryption();
             const storagePublicKey = decryption.generate_key();
             const storagePrivateKey = decryption.get_private_key();
 

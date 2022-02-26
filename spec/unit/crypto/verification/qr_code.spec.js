@@ -16,11 +16,11 @@ limitations under the License.
 */
 import "../../../olm-loader";
 import { logger } from "../../../../src/logger";
-
-const Olm = global.Olm;
+import { OlmRegistry } from "../../../../src/crypto/olmlib";
 
 describe("QR code verification", function() {
-    if (!global.Olm) {
+    const Olm = OlmRegistry.getInstance;
+    if (!OlmRegistry.getInstance) {
         logger.warn('Not running device verification tests: libolm not present');
         return;
     }

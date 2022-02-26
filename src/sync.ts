@@ -545,8 +545,10 @@ export class SyncApi {
 
         this.running = true;
 
-        if (global.window && global.window.addEventListener) {
-            global.window.addEventListener("online", this.onOnline, false);
+        const windowWrapper = (typeof window !== "undefined" ? window : utils.safeGlobal("window")) || {};
+
+        if (windowWrapper && windowWrapper['addEventListener']) {
+            (<any>windowWrapper).addEventListener("online", this.onOnline, false);
         }
 
         let savedSyncPromise = Promise.resolve();
@@ -714,9 +716,12 @@ export class SyncApi {
         // global.window AND global.window.removeEventListener.
         // Some platforms (e.g. React Native) register global.window,
         // but do not have global.window.removeEventListener.
-        if (global.window && global.window.removeEventListener) {
-            global.window.removeEventListener("online", this.onOnline, false);
+        const windowWrapper = (typeof window !== "undefined" ? window : utils.safeGlobal("window")) || {};
+
+        if (windowWrapper && windowWrapper['removeEventListener']) {
+            (<any>windowWrapper).removeEventListener("online", this.onOnline, false);
         }
+
         this.running = false;
         if (this.currentSyncRequest) {
             this.currentSyncRequest.abort();

@@ -21,7 +21,7 @@ limitations under the License.
 
 import { PkSigning } from "@matrix-org/olm";
 
-import { decodeBase64, encodeBase64, pkSign, pkVerify } from './olmlib';
+import { decodeBase64, encodeBase64, OlmRegistry, pkSign, pkVerify } from './olmlib';
 import { logger } from '../logger';
 import { IndexedDBCryptoStore } from '../crypto/store/indexeddb-crypto-store';
 import { decryptAES, encryptAES } from './aes';
@@ -119,7 +119,7 @@ export class CrossSigningInfo {
 
         function validateKey(key: Uint8Array): [string, PkSigning] {
             if (!key) return;
-            const signing = new global.Olm.PkSigning();
+            const signing = new OlmRegistry.getInstance.PkSigning();
             const gotPubkey = signing.init_with_seed(key);
             if (gotPubkey === expectedPubkey) {
                 return [gotPubkey, signing];
@@ -308,7 +308,7 @@ export class CrossSigningInfo {
 
         try {
             if (level & CrossSigningLevel.MASTER) {
-                masterSigning = new global.Olm.PkSigning();
+                masterSigning = new OlmRegistry.getInstance.PkSigning();
                 privateKeys.master = masterSigning.generate_seed();
                 masterPub = masterSigning.init_with_seed(privateKeys.master);
                 keys.master = {
@@ -323,7 +323,7 @@ export class CrossSigningInfo {
             }
 
             if (level & CrossSigningLevel.SELF_SIGNING) {
-                const sskSigning = new global.Olm.PkSigning();
+                const sskSigning = new OlmRegistry.getInstance.PkSigning();
                 try {
                     privateKeys.self_signing = sskSigning.generate_seed();
                     const sskPub = sskSigning.init_with_seed(privateKeys.self_signing);
@@ -341,7 +341,7 @@ export class CrossSigningInfo {
             }
 
             if (level & CrossSigningLevel.USER_SIGNING) {
-                const uskSigning = new global.Olm.PkSigning();
+                const uskSigning = new OlmRegistry.getInstance.PkSigning();
                 try {
                     privateKeys.user_signing = uskSigning.generate_seed();
                     const uskPub = uskSigning.init_with_seed(privateKeys.user_signing);

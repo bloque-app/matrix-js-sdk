@@ -186,7 +186,7 @@ export type Callback<T = any> = (err: Error | any | null, data?: T) => void;
 export type ResetTimelineCallback = (roomId: string) => boolean;
 
 const SCROLLBACK_DELAY_MS = 3000;
-export const CRYPTO_ENABLED: boolean = isCryptoAvailable();
+// export const CRYPTO_ENABLED: boolean = isCryptoAvailable();
 const CAPABILITIES_CACHE_MS = 21600000; // 6 hours - an arbitrary value
 const TURN_CHECK_INTERVAL = 10 * 60 * 1000; // poll for turn credentials every 10 minutes
 
@@ -1201,9 +1201,9 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
         this.callEventHandler?.stop();
         this.callEventHandler = null;
 
-        global.clearInterval(this.checkTurnServersIntervalID);
+        clearInterval(this.checkTurnServersIntervalID);
         if (this.clientWellKnownIntervalID !== undefined) {
-            global.clearInterval(this.clientWellKnownIntervalID);
+            clearInterval(this.clientWellKnownIntervalID);
         }
     }
 
@@ -1235,7 +1235,7 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
             return;
         }
 
-        const account = new global.Olm.Account();
+        const account = new olmlib.OlmRegistry.getInstance.Account();
         try {
             const deviceData = getDeviceResult.device_data;
             if (deviceData.algorithm !== DEHYDRATION_ALGORITHM) {
@@ -6277,7 +6277,7 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
                 // If we get a 403, there's no point in looping forever.
                 if (err.httpStatus === 403) {
                     logger.info("TURN access unavailable for this account: stopping credentials checks");
-                    if (this.checkTurnServersIntervalID !== null) global.clearInterval(this.checkTurnServersIntervalID);
+                    if (this.checkTurnServersIntervalID !== null) clearInterval(this.checkTurnServersIntervalID);
                     this.checkTurnServersIntervalID = null;
                 }
             }
@@ -8418,7 +8418,7 @@ export class MatrixClient extends TypedEventEmitter<EmittedEvents, ClientEventHa
         // When picking an algorithm, we pick the hashed over no hashes
         if (hashes['algorithms'].includes('sha256')) {
             // Abuse the olm hashing
-            const olmutil = new global.Olm.Utility();
+            const olmutil = new olmlib.OlmRegistry.getInstance.Utility();
             params["addresses"] = addressPairs.map(p => {
                 const addr = p[0].toLowerCase(); // lowercase to get consistent hashes
                 const med = p[1].toLowerCase();

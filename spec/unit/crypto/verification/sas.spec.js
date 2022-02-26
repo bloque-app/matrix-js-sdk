@@ -24,13 +24,12 @@ import * as olmlib from "../../../../src/crypto/olmlib";
 import { logger } from "../../../../src/logger";
 import { resetCrossSigningKeys } from "../crypto-utils";
 
-const Olm = global.Olm;
-
 let ALICE_DEVICES;
 let BOB_DEVICES;
 
 describe("SAS verification", function() {
-    if (!global.Olm) {
+    const Olm = olmlib.OlmRegistry.getInstance;
+    if (!olmlib.OlmRegistry.getInstance) {
         logger.warn('Not running device verification unit tests: libolm not present');
         return;
     }

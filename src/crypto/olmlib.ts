@@ -24,6 +24,7 @@ import anotherjson from "another-json";
 import { Logger } from "loglevel";
 
 import type { PkSigning } from "@matrix-org/olm";
+import type * as OlmInstance from '@matrix-org/olm';
 import { OlmDevice } from "./OlmDevice";
 import { DeviceInfo } from "./deviceinfo";
 import { logger } from '../logger';
@@ -51,6 +52,21 @@ export const MEGOLM_ALGORITHM = Algorithm.Megolm;
  * matrix algorithm tag for megolm backups
  */
 export const MEGOLM_BACKUP_ALGORITHM = Algorithm.MegolmBackup;
+
+export type OlmLib = typeof OlmInstance;
+export const OLM_INSTANCE_SYMBOL = Symbol('#olmlib-instance');
+export class OlmRegistry {
+    static [OLM_INSTANCE_SYMBOL]: OlmLib | null;
+    private constructor() {} // avoid construct this directly
+    static createInstance(lib: OlmLib) {
+        if (this[OLM_INSTANCE_SYMBOL]) return this[OLM_INSTANCE_SYMBOL];
+        return this[OLM_INSTANCE_SYMBOL] = lib;
+    }
+
+    static get getInstance() {
+        return this[OLM_INSTANCE_SYMBOL];
+    }
+}
 
 export interface IOlmSessionResult {
     device: DeviceInfo;
@@ -505,7 +521,7 @@ export async function verifySignature(
 export function pkSign(obj: IObject, key: PkSigning, userId: string, pubKey: string): string {
     let createdKey = false;
     if (key instanceof Uint8Array) {
-        const keyObj = new global.Olm.PkSigning();
+        const keyObj = new OlmRegistry.getInstance.PkSigning();
         pubKey = keyObj.init_with_seed(key);
         key = keyObj;
         createdKey = true;
@@ -540,7 +556,7 @@ export function pkVerify(obj: IObject, pubKey: string, userId: string) {
         throw new Error("No signature");
     }
     const signature = obj.signatures[userId][keyId];
-    const util = new global.Olm.Utility();
+    const util = new OlmRegistry.getInstance.Utility();
     const sigs = obj.signatures;
     delete obj.signatures;
     const unsigned = obj.unsigned;

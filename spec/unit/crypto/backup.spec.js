@@ -30,8 +30,6 @@ import { Crypto } from "../../../src/crypto";
 import { resetCrossSigningKeys } from "./crypto-utils";
 import { BackupManager } from "../../../src/crypto/backup";
 
-const Olm = global.Olm;
-
 const MegolmDecryption = algorithms.DECRYPTION_CLASSES['m.megolm.v1.aes-sha2'];
 
 const ROOM_ID = '!ROOM:ID';
@@ -148,7 +146,8 @@ function makeTestClient(sessionStore, cryptoStore) {
 }
 
 describe("MegolmBackup", function() {
-    if (!global.Olm) {
+    const Olm = olmlib.OlmRegistry.getInstance;
+    if (!Olm) {
         logger.warn('Not running megolm backup unit tests: libolm not present');
         return;
     }
