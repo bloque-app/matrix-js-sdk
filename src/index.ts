@@ -19,6 +19,7 @@ import request from "request";
 import * as matrixcs from "./matrix";
 import * as utils from "./utils";
 import { logger } from './logger';
+export { OlmRegistry } from "./crypto/olmlib";
 
 matrixcs.request(request);
 
