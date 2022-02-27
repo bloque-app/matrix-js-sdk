@@ -885,7 +885,7 @@ export class Backend implements CryptoStore {
             description = `${mode} crypto store transaction ${txnId} in ${stores}`;
             log.debug(`Starting ${description}`);
         }
-        const txn = this.db.transaction(stores, mode);
+        const txn = this.db.transaction(Array.from(stores), mode);
         const promise = promiseifyTxn(txn);
         const result = func(txn);
         if (PROFILE_TRANSACTIONS) {
