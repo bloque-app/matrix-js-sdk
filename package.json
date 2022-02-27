@@ -20,7 +20,8 @@
     "lint:types": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "yarn test --coverage"
+    "coverage": "yarn test --coverage",
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
