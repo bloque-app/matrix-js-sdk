@@ -48,7 +48,11 @@
     "LICENSE",
     "README.md",
     "package.json",
-    "release.sh"
+    "release.sh",
+    "jsdoc.json",
+    "tsconfig.json",
+    "tsconfig-build.json",
+    ".babelrc"
   ],
   "dependencies": {
     "@babel/runtime": "^7.12.5",
