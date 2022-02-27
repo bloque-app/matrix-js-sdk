@@ -19,6 +19,8 @@ import queryString from "qs";
 
 import * as matrixcs from "./matrix";
 
+export { OlmRegistry } from "./crypto/olmlib";
+
 matrixcs.request(function(opts, fn) {
     // We manually fix the query string for browser-request because
     // it doesn't correctly handle cases like ?via=one&via=two. Instead

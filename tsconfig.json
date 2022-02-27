@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "es2017",
+    "lib": ["DOM"],
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noEmit": true,
