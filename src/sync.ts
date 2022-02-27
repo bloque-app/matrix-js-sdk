@@ -1017,7 +1017,6 @@ export class SyncApi {
      */
     private async processSyncResponse(syncEventData: ISyncStateData, data: ISyncResponse): Promise<void> {
         const client = this.client;
-
         // data looks like:
         // {
         //    next_batch: $token,

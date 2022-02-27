@@ -47,6 +47,10 @@ describe("Browserify Test", function() {
         httpBackend.stop();
     });
 
+    /**
+     * @jest-environment jsdom
+     */
+
     it("Sync", async function() {
         const event = utils.mkMembership({
             room: ROOM_ID,

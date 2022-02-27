@@ -396,6 +396,7 @@ export class CrossSigningInfo {
         } else {
             throw new Error("Tried to set cross-signing keys without a master key");
         }
+
         const masterKey = publicKeyFromKeyInfo(signingKeys.master);
 
         // verify signatures

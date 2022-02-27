@@ -157,6 +157,8 @@ export class EncryptionSetupBuilder {
      */
     public async persist(crypto: Crypto): Promise<void> {
         // store private keys in cache
+        // eslint-disable-next-line
+        console.log('EcryptionSetup.persist', this);
         if (this.crossSigningKeys) {
             const cacheCallbacks = createCryptoStoreCacheCallbacks(crypto.cryptoStore, crypto.olmDevice);
             for (const type of ["master", "self_signing", "user_signing"]) {
@@ -207,6 +209,8 @@ export class EncryptionSetupOperation {
     public async apply(crypto: Crypto): Promise<void> {
         const baseApis = crypto.baseApis;
         // upload cross-signing keys
+        // eslint-disable-next-line
+        console.log('EncryptionSetupOperation.apply: ', this);
         if (this.crossSigningKeys) {
             const keys: Partial<CrossSigningKeys> = {};
             for (const [name, key] of Object.entries(this.crossSigningKeys.keys)) {

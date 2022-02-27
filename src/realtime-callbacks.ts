@@ -177,7 +177,16 @@ function runCallbacks(): void {
     for (let i = 0; i < callbacksToRun.length; i++) {
         cb = callbacksToRun[i];
         try {
-            cb.func.apply(global, cb.params);
+            const context = {};
+            if (typeof window !== "undefined") {
+                Object.assign(context, window);
+            }
+
+            if (typeof global !== "undefined") {
+                Object.assign(context, global);
+            }
+
+            cb.func.apply(context, cb.params);
         } catch (e) {
             logger.error("Uncaught exception in callback function",
                 e.stack || e);

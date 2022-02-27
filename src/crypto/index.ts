@@ -751,6 +751,8 @@ export class Crypto extends TypedEventEmitter<CryptoEvent, CryptoEventHandlerMap
         // secret storage if it exists. If it does not, it is assumed this will be
         // done as part of setting up secret storage later.
         const crossSigningPrivateKeys = builder.crossSigningCallbacks.privateKeys;
+        // eslint-disable-next-line
+        console.log("Checking if crossSigningPrivateKeys exists");
         if (
             crossSigningPrivateKeys.size &&
             !this.baseApis.cryptoCallbacks.saveCrossSigningKeys
@@ -3117,7 +3119,7 @@ export class Crypto extends TypedEventEmitter<CryptoEvent, CryptoEventHandlerMap
                 this.secretStorage.onSecretReceived(event);
             } else if (event.getType() === "org.matrix.room_key.withheld") {
                 this.onRoomKeyWithheldEvent(event);
-            } else if (event.getContent().transaction_id) {
+            } else if (event.getContent().transaction_id) { // if a cross_signing_request
                 this.onKeyVerificationMessage(event);
             } else if (event.getContent().msgtype === "m.bad.encrypted") {
                 this.onToDeviceBadEncrypted(event);

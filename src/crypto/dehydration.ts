@@ -81,7 +81,7 @@ export class DehydrationManager {
                             this.deviceDisplayName = deviceDisplayName;
                             const now = Date.now();
                             const delay = Math.max(1, time + oneweek - now);
-                            this.timeoutId = global.setTimeout(
+                            this.timeoutId = setTimeout(
                                 this.dehydrateDevice.bind(this), delay,
                             );
                         }
@@ -111,7 +111,7 @@ export class DehydrationManager {
         if (!key) {
             // unsetting the key -- cancel any pending dehydration task
             if (this.timeoutId) {
-                global.clearTimeout(this.timeoutId);
+                clearTimeout(this.timeoutId);
                 this.timeoutId = undefined;
             }
             // clear storage
@@ -155,7 +155,7 @@ export class DehydrationManager {
         }
         this.inProgress = true;
         if (this.timeoutId) {
-            global.clearTimeout(this.timeoutId);
+            clearTimeout(this.timeoutId);
             this.timeoutId = undefined;
         }
         try {
@@ -284,7 +284,7 @@ export class DehydrationManager {
             logger.log("Done dehydrating");
 
             // dehydrate again in a week
-            this.timeoutId = global.setTimeout(
+            this.timeoutId = setTimeout(
                 this.dehydrateDevice.bind(this), oneweek,
             );
 
@@ -296,7 +296,7 @@ export class DehydrationManager {
 
     public stop() {
         if (this.timeoutId) {
-            global.clearTimeout(this.timeoutId);
+            clearTimeout(this.timeoutId);
             this.timeoutId = undefined;
         }
     }

@@ -193,6 +193,7 @@ export class SecretStorage {
         const keyInfo = await this.accountDataAdapter.getAccountDataFromServer<ISecretStorageKeyInfo>(
             "m.secret_storage.key." + keyId,
         );
+
         return keyInfo ? [keyId, keyInfo] : null;
     }
 
@@ -516,6 +517,7 @@ export class SecretStorage {
                         ],
                     },
                 );
+
                 await olmlib.encryptMessageForDevice(
                     encryptedContent.ciphertext,
                     this.baseApis.getUserId(),

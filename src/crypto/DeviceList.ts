@@ -68,7 +68,7 @@ type EmittedEvents = CryptoEvent.WillUpdateDevices | CryptoEvent.DevicesUpdated 
  * @alias module:crypto/DeviceList
  */
 export class DeviceList extends TypedEventEmitter<EmittedEvents, CryptoEventHandlerMap> {
-    private devices: { [userId: string]: { [deviceId: string]: IDevice } } = {};
+    public devices: { [userId: string]: { [deviceId: string]: IDevice } } = {};
 
     public crossSigningInfo: { [userId: string]: ICrossSigningInfo } = {};
 

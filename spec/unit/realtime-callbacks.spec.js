@@ -45,8 +45,9 @@ describe("realtime-Callbacks", function() {
 
         it("should set 'this' to the global object", function() {
             let passed = false;
+            global.nn = true;
             const callback = function() {
-                expect(this).toBe(global); // eslint-disable-line @babel/no-invalid-this
+                expect(this.nn).toBe(true); // eslint-disable-line @babel/no-invalid-this
                 expect(this.console).toBeTruthy(); // eslint-disable-line @babel/no-invalid-this
                 passed = true;
             };

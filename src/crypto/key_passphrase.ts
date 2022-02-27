@@ -87,8 +87,7 @@ async function deriveKeyBrowser(
     iterations: number,
     numBits: number,
 ): Promise<Uint8Array> {
-    const subtleCrypto = global.crypto.subtle;
-    const TextEncoder = global.TextEncoder;
+    const subtleCrypto = crypto.subtle;
     if (!subtleCrypto || !TextEncoder) {
         throw new Error("Password-based backup is not avaiable on this platform");
     }

@@ -136,6 +136,7 @@ async function encryptBrowser(data: string, key: Uint8Array, name: string, ivStr
         iv = decodeBase64(ivStr);
     } else {
         iv = new Uint8Array(16);
+        if (typeof window === "undefined") throw new Error("trying to access window in a non browser context");
         window.crypto.getRandomValues(iv);
 
         // clear bit 63 of the IV to stop us hitting the 64-bit counter boundary

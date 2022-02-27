@@ -208,7 +208,7 @@ export class QRCodeData {
 
     private static generateSharedSecret(): string {
         const secretBytes = new Uint8Array(11);
-        global.crypto.getRandomValues(secretBytes);
+        crypto.getRandomValues(secretBytes);
         return encodeUnpaddedBase64(secretBytes);
     }
 
