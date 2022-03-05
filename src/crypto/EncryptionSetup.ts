@@ -367,12 +367,12 @@ class SSSSCryptoCallbacks {
         { keys }: { keys: Record<string, ISecretStorageKeyInfo> },
         name: string,
     ): Promise<[string, Uint8Array]|null> {
-        for (const keyId of Object.keys(keys)) {
-            const privateKey = this.privateKeys.get(keyId);
-            if (privateKey) {
-                return [keyId, privateKey];
-            }
-        }
+        // for (const keyId of Object.keys(keys)) {
+        //     const privateKey = this.privateKeys.get(keyId);
+        //     if (privateKey) {
+        //         return [keyId, privateKey];
+        //     }
+        // }
         // if we don't have the key cached yet, ask
         // for it to the general crypto callbacks and cache it
         if (this?.delegateCryptoCallbacks?.getSecretStorageKey) {
