@@ -158,7 +158,6 @@ export class EncryptionSetupBuilder {
     public async persist(crypto: Crypto): Promise<void> {
         // store private keys in cache
         // eslint-disable-next-line
-        console.log('EcryptionSetup.persist', this);
         if (this.crossSigningKeys) {
             const cacheCallbacks = createCryptoStoreCacheCallbacks(crypto.cryptoStore, crypto.olmDevice);
             for (const type of ["master", "self_signing", "user_signing"]) {
@@ -359,36 +358,20 @@ class CrossSigningCallbacks implements ICryptoCallbacks, ICacheCallbacks {
  * the SecretStorage crypto callbacks
  */
 class SSSSCryptoCallbacks {
-    private readonly privateKeys = new Map<string, Uint8Array>();
-
     constructor(private readonly delegateCryptoCallbacks?: ICryptoCallbacks) {}
 
     public async getSecretStorageKey(
         { keys }: { keys: Record<string, ISecretStorageKeyInfo> },
         name: string,
     ): Promise<[string, Uint8Array]|null> {
-        // for (const keyId of Object.keys(keys)) {
-        //     const privateKey = this.privateKeys.get(keyId);
-        //     if (privateKey) {
-        //         return [keyId, privateKey];
-        //     }
-        // }
-        // if we don't have the key cached yet, ask
-        // for it to the general crypto callbacks and cache it
         if (this?.delegateCryptoCallbacks?.getSecretStorageKey) {
-            const result = await this.delegateCryptoCallbacks.
-                getSecretStorageKey({ keys }, name);
-            if (result) {
-                const [keyId, privateKey] = result;
-                this.privateKeys.set(keyId, privateKey);
-            }
+            const result = await this.delegateCryptoCallbacks.getSecretStorageKey({ keys }, name);
             return result;
         }
         return null;
     }
 
     public addPrivateKey(keyId: string, keyInfo: ISecretStorageKeyInfo, privKey: Uint8Array): void {
-        this.privateKeys.set(keyId, privKey);
         // Also pass along to application to cache if it wishes
         this.delegateCryptoCallbacks?.cacheSecretStorageKey?.(keyId, keyInfo, privKey);
     }
