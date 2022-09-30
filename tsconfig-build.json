@@ -6,7 +6,8 @@
     "noEmit": false,
     "emitDecoratorMetadata": true,
     "outDir": "./lib",
-    "rootDir": "src"
+    "rootDir": "src",
+    "skipLibCheck": true,
   },
   "exclude": [
     "./spec/**/*.ts"

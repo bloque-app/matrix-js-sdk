@@ -8,7 +8,8 @@
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noEmit": true,
-    "declaration": true
+    "declaration": true,
+    "skipLibCheck": true,
   },
   "include": [
     "./src/**/*.ts",
